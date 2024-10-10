@@ -20,12 +20,13 @@ Configure the I2C as a Slave device, and then analyze the I2C status register bi
 
 ### Capture Loop
         
-        Using a very tight polling loop, combine the value of two 16-bit status bit registers, STAR1 and STAR2
-        into a 32-bit status event sample.  If the event sample changes from the previous reading, record sample
-        with a time-stamp into an array.  Continue looping until timeout (10 seconds), or until the sample array is full.
+        Using a very tight polling loop, combine the value of two 16-bit status bit registers,
+        STAR1 and STAR2 into a 32-bit status event sample.  If the event sample changes from the
+        previous reading, record sample with a time-stamp into an array.
+        Continue looping until timeout (10 seconds), or until the sample array is full.
         
-        Once the sample data has been collected, generate a report showing how the status bits change as the I2C
-        state machine processes multiple I2C transactions.
+        Once the sample data has been collected, generate a report showing how the status bits
+        change as the I2C state machine processes multiple I2C transactions.
         
 ### Capture Report
         
