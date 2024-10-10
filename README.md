@@ -33,8 +33,8 @@ Configure the I2C as a Slave device, and then analyze the I2C status register bi
         The report loop annotates each line with the name of the status bit that's active
         The listing below shows two loops of the Master I2C code writing and reading bytes.
         
-        The bit pattern, "BUSY RXNE" indicates an I2C write
-        The bit pattern, "TRA BUSY TXE" indicates an I2C read
+        The bit pattern, "BUSY RXNE" indicates an I2C write from master
+        The bit pattern, "TRA BUSY TXE" indicates an I2C read to master
         
         I2C Slave mode
         Indx  Time   Event bits  Data   Annotations
