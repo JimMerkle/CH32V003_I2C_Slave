@@ -152,7 +152,7 @@ int main(void)
     short_blink();
 
     // For 10 seconds, record changes (with time-stamp)
-    // Reset and start SysTick timer running (normally disabled - see debug.c
+    // Reset and start SysTick timer running (normally disabled) - see debug.c
     SysTick->CTLR &= ~1;  // force SysTick stopped
     SysTick->CNT = 0;     // Clear counter/timer
     SysTick->CTLR |= 1;   // Start timer/counter
@@ -177,12 +177,16 @@ int main(void)
             // If Master attemps to read a byte of data from us...
             if(lastevent & 0x80) // is TXE set?
                 I2C1->DATAR = 0xAB; // If master tries to read from us, send constant 0xAB
+            // The AF bit, once set, should be cleared so we can see if/when it gets set again
+            if(lastevent & 0x400) // is AF set?
+                I2C1->STAR1 &= ~0x400; // Write zero to AF bit
+
             count++;
         }
     } while(SysTick->CNT < 60000000 && count < MAX_EVENTS); // 4-seconds of 6 ticks / us
     SysTick->CTLR &= ~1;  // force SysTick stopped
 
-    // Dump the table - We have all the time in the world.  Provide annotations
+    // Generate report - We have all the time in the world.  Provide annotations
     printf("Indx  Time   Event bits  Data   Annotations\r\n");
 
     for(unsigned i=0;i<count;i++){
@@ -191,19 +195,21 @@ int main(void)
         printf("%03u  %07u  0x%06X   ",i,(table[i].time + 3) / 6,table[i].event,table[i].data); // round time to closest us
 
         if(table[i].data != 0xFF) {
-            printf("0x%02X   ",table[i].data); // round time to closest us
+            printf("0x%02X   ",table[i].data); // show data
         }
         else {
-            printf("----   ");
+            printf("----   "); // don't show data
         }
+        // Add annotations
         if(table[i].event & 0x040000) indx += sprintf(&buf[indx],"TRA ");
         if(table[i].event & 0x020000) indx += sprintf(&buf[indx],"BUSY ");
+        if(table[i].event & 0x400) indx += sprintf(&buf[indx],"AF ");
         if(table[i].event & 0x80) indx += sprintf(&buf[indx],"TXE ");
         if(table[i].event & 0x40) indx += sprintf(&buf[indx],"RXNE ");
         if(table[i].event & 0x10) indx += sprintf(&buf[indx],"STOPF ");
         if(table[i].event & 0x04) indx += sprintf(&buf[indx],"BTF ");
         if(table[i].event & 0x02) indx += sprintf(&buf[indx],"ADDR ");
-        printf("%s\r\n",buf);
+        printf("%s\r\n",buf); // New line
     }
     //printf("Data Byte: 0x%02X\r\n",(uint8_t)I2C1->DATAR);
 

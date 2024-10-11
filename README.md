@@ -24,6 +24,7 @@ Configure the I2C as a Slave device, and then analyze the I2C status register bi
         STAR1 and STAR2 into a 32-bit status event sample.  If the event sample changes from the
         previous reading, record sample with a time-stamp into an array.
         Continue looping until timeout (10 seconds), or until the sample array is full.
+        During capture loop, if "AF" bit present, software clears it.
         
         Once the sample data has been collected, generate a report showing how the status bits
         change as the I2C state machine processes multiple I2C transactions.
@@ -33,42 +34,48 @@ Configure the I2C as a Slave device, and then analyze the I2C status register bi
         The report loop annotates each line with the name of the status bit that's active
         The listing below shows two loops of the Master I2C code writing and reading bytes.
         
-        The bit pattern, "BUSY RXNE" indicates an I2C write from master
-        The bit pattern, "TRA BUSY TXE" indicates an I2C read to master
+        The bit pattern, "BUSY RXNE" indicates an I2C master write
+        The bit pattern, "TRA BUSY TXE" indicates an I2C master read
         
         I2C Slave mode
         Indx  Time   Event bits  Data   Annotations
-        000  0034995  0x020000   ----   BUSY
-        001  0035093  0x020002   ----   BUSY ADDR
-        002  0035095  0x020000   ----   BUSY
-        003  0035187  0x020040   0x30   BUSY RXNE
-        004  0035189  0x020000   ----   BUSY
-        005  0035281  0x020040   0x31   BUSY RXNE
-        006  0035282  0x020000   ----   BUSY
-        007  0035293  0x000010   ----   STOPF
-        008  0035300  0x020010   ----   BUSY STOPF
-        009  0035492  0x020050   0x32   BUSY RXNE STOPF
-        010  0035493  0x020010   ----   BUSY STOPF
-        011  0035585  0x020050   0x33   BUSY RXNE STOPF
-        012  0035587  0x020010   ----   BUSY STOPF
-        013  0035598  0x000010   ----   STOPF
-        014  0035605  0x020010   ----   BUSY STOPF
-        015  0035703  0x060090   ----   TRA BUSY TXE STOPF
-        016  0035795  0x060490   ----   TRA BUSY TXE STOPF
-        017  0035808  0x000410   ----   STOPF
-        018  1038825  0x020410   ----   BUSY STOPF
-        019  1039017  0x020450   0x30   BUSY RXNE STOPF
-        020  1039018  0x020410   ----   BUSY STOPF
-        021  1039111  0x020450   0x31   BUSY RXNE STOPF
-        022  1039112  0x020410   ----   BUSY STOPF
-        023  1039124  0x000410   ----   STOPF
-        024  1039130  0x020410   ----   BUSY STOPF
-        025  1039322  0x020450   0x32   BUSY RXNE STOPF
-        026  1039323  0x020410   ----   BUSY STOPF
-        027  1039416  0x020450   0x33   BUSY RXNE STOPF
-        028  1039417  0x020410   ----   BUSY STOPF
-        029  1039428  0x000410   ----   STOPF
-        030  1039435  0x020410   ----   BUSY STOPF
-        031  1039534  0x060490   ----   TRA BUSY TXE STOPF
-        032  1039638  0x000410   ----   STOPF
+        000  0123541  0x020000   ----   BUSY
+        001  0123639  0x020002   ----   BUSY ADDR
+        002  0123640  0x020000   ----   BUSY
+        003  0123733  0x020040   0x30   BUSY RXNE
+        004  0123734  0x020000   ----   BUSY
+        005  0123826  0x020040   0x31   BUSY RXNE
+        006  0123828  0x020000   ----   BUSY
+        007  0123839  0x000010   ----   STOPF
+        008  0123845  0x020010   ----   BUSY STOPF
+        009  0124037  0x020050   0x32   BUSY RXNE STOPF
+        010  0124038  0x020010   ----   BUSY STOPF
+        011  0124130  0x020050   0x33   BUSY RXNE STOPF
+        012  0124132  0x020010   ----   BUSY STOPF
+        013  0124143  0x000010   ----   STOPF
+        014  0124150  0x020010   ----   BUSY STOPF
+        015  0124249  0x060090   ----   TRA BUSY TXE STOPF
+        016  0124340  0x060490   ----   TRA BUSY AF TXE STOPF
+        017  0124341  0x060090   ----   TRA BUSY TXE STOPF
+        018  0124353  0x000010   ----   STOPF
+        019  1126800  0x020010   ----   BUSY STOPF
+        020  1126898  0x020012   ----   BUSY STOPF ADDR
+        021  1126899  0x020010   ----   BUSY STOPF
+        022  1126992  0x020050   0x30   BUSY RXNE STOPF
+        023  1126993  0x020010   ----   BUSY STOPF
+        024  1127086  0x020050   0x31   BUSY RXNE STOPF
+        025  1127087  0x020010   ----   BUSY STOPF
+        026  1127098  0x000010   ----   STOPF
+        027  1127105  0x020010   ----   BUSY STOPF
+        028  1127296  0x020050   0x32   BUSY RXNE STOPF
+        029  1127297  0x020010   ----   BUSY STOPF
+        030  1127390  0x020050   0x33   BUSY RXNE STOPF
+        031  1127391  0x020010   ----   BUSY STOPF
+        032  1127402  0x000010   ----   STOPF
+        033  1127409  0x020010   ----   BUSY STOPF
+        034  1127508  0x060090   ----   TRA BUSY TXE STOPF
+        035  1127599  0x060490   ----   TRA BUSY AF TXE STOPF
+        036  1127600  0x060090   ----   TRA BUSY TXE STOPF
+        037  1127612  0x060010   ----   TRA BUSY STOPF
+        038  1127613  0x000010   ----   STOPF
         
